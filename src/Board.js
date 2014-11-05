@@ -102,7 +102,7 @@
       var result = false;  
 
       for (var i = 0; i < this.rows().length; i++){
-        if (this.hasRowConflictAt([i])){
+        if (this.hasRowConflictAt(i)){
           result = true;
         }
       }
@@ -117,11 +117,25 @@
     //
     // test if a specific column on this board contains a conflict
     hasColConflictAt: function(colIndex) {
+      var count  = 0;
+      for (var i = 0; i < this.get('n'); i++) {
+        if(this.rows()[i][colIndex] !== 0){
+          count++;
+        }
+      }
+      if(count > 1){
+        return true;
+      }
       return false; // fixme
     },
 
     // test if any columns on this board contain conflicts
     hasAnyColConflicts: function() {
+      for(var i = 0; i < this.get('n'); i++){
+        if( this.hasColConflictAt(i) === true){
+          return true;
+        }
+      }
       return false; // fixme
     },
 
