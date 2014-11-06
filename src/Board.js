@@ -130,8 +130,9 @@
 
     // test if any columns on this board contain conflicts
     hasAnyColConflicts: function() {
+      
       for(var i = 0; i < this.get('n'); i++){
-        if( this.hasColConflictAt(i) === true){
+        if( this.hasColConflictAt(i) === true){ 
           return true;
         }
       }
@@ -147,34 +148,37 @@
     hasMajorDiagonalConflictAt: function(majorDiagonalColumnIndexAtFirstRow) {
     
       var flattened = [];
-      var count = 0;
-      var newLength = this.get('n') - majorDiagonalColumnIndexAtFirstRow;
+      var size = this.get('n');
+
+      // If majorDiagonalColumnIndexAtFirstRow is the last column, we can return false
+      if(majorDiagonalColumnIndexAtFirstRow === (size - 1)) {
+        return false;
+      }
 
       // Flatten the arrays, removing columns before majorDiagonalColumnIndexAtFirstRow
       for(var i = 0; i < this.rows().length; i++){
-        // Slice the arrays starting at the columnIndex
-        var modifiedArray =  this.rows()[i];
-        modifiedArray = modifiedArray.slice(majorDiagonalColumnIndexAtFirstRow, modifiedArray.length);
-
-        flattened = flattened.concat(modifiedArray);
+        flattened = flattened.concat(this.rows()[i]);
       }
 
-      while(flattened[0] != null ){
+      // We don't need to do the last row, so if flattened[size] is null we can stop.
+      while(flattened[size] != null ){
 
         count = 0;
-        for (var j = 0; j < flattened.length / newLength-1; j++){ //go through "rows" in flattened array
-          if (flattened[j * (1 + newLength)] !== 0){
+        for (var j = 0; j < Math.floor(flattened.length / size-1); j++){ //go through "rows" in flattened array
+
+          if (flattened[majorDiagonalColumnIndexAtFirstRow + (j * (size + 1))] !== 0){
             count++;
           }
-        }//end of for loop
 
-        flattened = flattened.slice(this.get('n'));
+        }
+
+        flattened = flattened.slice(size - 1);
       
         if (count > 1) {
           return true;
         }
 
-      }//end of while loop
+      }
 
       return false;
 
@@ -198,12 +202,49 @@
     //
     // test if a specific minor diagonal on this board contains a conflict
     hasMinorDiagonalConflictAt: function(minorDiagonalColumnIndexAtFirstRow) {
-      return false; // fixme
+      var flattened = [];
+      var size = this.get('n')
+
+      // If minorDiagonalColumnIndexAtFirstRow is the first column, we can return false
+      if(minorDiagonalColumnIndexAtFirstRow === 0) {
+        return false;
+      }
+
+      // Flatten the arrays, removing columns after minorDiagonalColumnIndexAtFirstRow
+      for(var i = 0; i < this.rows().length; i++){
+        flattened = flattened.concat(this.rows()[i].reverse()); // Reverse the array before concating it
+      }
+
+      while(flattened[0] != null ){
+
+        count = 0;
+        for (var j = 0; j < Math.floor(flattened.length / size-1); j++){ //go through "rows" in flattened array
+
+          if (flattened[minorDiagonalColumnIndexAtFirstRow + (j * (size + 1))] !== 0){
+            count++;
+          }
+
+        }
+
+        flattened = flattened.slice(size - 1);
+      
+        if (count > 1) {
+          return true;
+        }
+
+      }//end of while loop
+      
+      return false;
     },
 
     // test if any minor diagonals on this board contain conflicts
     hasAnyMinorDiagonalConflicts: function() {
-      return false; // fixme
+      for(var i = 0; i < this.get('n'); i++){
+        if(this.hasMinorDiagonalConflictAt(i)){
+          return true;
+        }
+      }
+      return false;
     }
 
     /*--------------------  End of Helper Functions  ---------------------*/
