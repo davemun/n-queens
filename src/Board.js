@@ -85,7 +85,6 @@
       for (var i = 0; i < this.rows()[rowIndex].length; i++) {
         if (this.rows()[rowIndex][i] !== 0){
           nQueens++;
-          console.log(nQueens);
         }
       }
 
@@ -146,12 +145,50 @@
     //
     // test if a specific major diagonal on this board contains a conflict
     hasMajorDiagonalConflictAt: function(majorDiagonalColumnIndexAtFirstRow) {
-      return false; // fixme
+    
+      var flattened = [];
+      var count = 0;
+      var newLength = this.get('n') - majorDiagonalColumnIndexAtFirstRow;
+
+      // Flatten the arrays, removing columns before majorDiagonalColumnIndexAtFirstRow
+      for(var i = 0; i < this.rows().length; i++){
+        // Slice the arrays starting at the columnIndex
+        var modifiedArray =  this.rows()[i];
+        modifiedArray = modifiedArray.slice(majorDiagonalColumnIndexAtFirstRow, modifiedArray.length);
+
+        flattened = flattened.concat(modifiedArray);
+      }
+
+      while(flattened[0] != null ){
+
+        count = 0;
+        for (var j = 0; j < flattened.length / newLength-1; j++){ //go through "rows" in flattened array
+          if (flattened[j * (1 + newLength)] !== 0){
+            count++;
+          }
+        }//end of for loop
+
+        flattened = flattened.slice(this.get('n'));
+      
+        if (count > 1) {
+          return true;
+        }
+
+      }//end of while loop
+
+      return false;
+
     },
+
 
     // test if any major diagonals on this board contain conflicts
     hasAnyMajorDiagonalConflicts: function() {
-      return false; // fixme
+      for(var i = 0; i < this.get('n'); i++){
+        if(this.hasMajorDiagonalConflictAt(i)){
+          return true;
+        }
+      }
+      return false;
     },
 
 
